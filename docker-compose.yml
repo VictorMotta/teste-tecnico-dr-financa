@@ -1,0 +1,20 @@
+version: "3.8"
+
+services:
+    api:
+        container_name: api
+        build: .
+        expose:
+            - "4000" # Expondo a porta apenas para a rede interna
+        env_file:
+            - .env
+        restart: always
+
+    nginx:
+        container_name: nginx_app
+        build: ./nginx
+        ports:
+            - "80:80" # Porta HTTP para redirecionar para HTTPS
+        depends_on:
+            - api
+        restart: always

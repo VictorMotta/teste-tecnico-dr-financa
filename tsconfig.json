@@ -1,0 +1,17 @@
+{
+  "compilerOptions": {
+    "target": "ES2023",
+    "module": "commonjs",
+    "outDir": "dist",
+    "noImplicitAny": true,
+    "moduleResolution": "Node",
+    "esModuleInterop": true,
+    "strict": true,
+    "rootDirs": ["src", "tests"],
+    "baseUrl": "src",
+    "paths": {
+      "@/*": ["*"]
+    }
+  },
+  "include": ["src", "tests", "types"]
+}
