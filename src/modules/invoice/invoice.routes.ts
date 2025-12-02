@@ -5,13 +5,17 @@ import { buildCreateInvoiceModule } from "./invoice.factory";
 
 const router = Router();
 
-const controllerCreate = buildCreateInvoiceModule();
+const controller = buildCreateInvoiceModule();
 
 router
+  .get(
+    "/",
+    controller.findAll.bind(controller),
+  )
   .post(
     "/",
     validateBody(createInvoiceSchema),
-    controllerCreate.create.bind(controllerCreate),
+    controller.create.bind(controller),
   );
 
 export { router as invoiceRouter };

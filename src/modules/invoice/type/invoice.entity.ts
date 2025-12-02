@@ -20,3 +20,8 @@ export type NewInvoiceEntity = Omit<
   InvoiceEntity,
   "id" | "createdAt" | "updatedAt"
 >;
+
+export type ListAllInvoiceEntity = Omit<
+  InvoiceEntity,
+  "state" | "description" | "emissionDate" | "updatedAt"
+>;

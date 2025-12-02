@@ -14,3 +14,4 @@ export interface InvoiceResponseDTO {
   createdAt: string;
   updatedAt: string;
 }
+

@@ -1,8 +1,7 @@
-import { InvoiceEntity } from "../type";
-import { CreateInvoiceDto, InvoiceResponseDTO } from "../dto";
+import { InvoiceEntity, ListAllInvoiceEntity } from "../type";
+import { CreateInvoiceDto, InvoiceResponseDTO, ListAllInvoiceResponseDto } from "../dto";
 import { Status } from "@prisma/client";
 import { Decimal } from "@prisma/client/runtime/client";
-
 
 export class InvoiceMapper {
   static toEntity(dto: CreateInvoiceDto): Omit<InvoiceEntity, "id" | "createdAt" | "updatedAt"> {
@@ -34,5 +33,18 @@ export class InvoiceMapper {
       createdAt: entity.createdAt.toISOString(),
       updatedAt: entity.updatedAt.toISOString(),
     };
+  }
+
+  static ListToResponseDTO(entity: ListAllInvoiceEntity): ListAllInvoiceResponseDto {
+        return {
+            id: entity.id,
+            cnpjCustomer: entity.cnpjCustomer,
+            municipality: entity.municipality,
+            serviceValue: Number(entity.serviceValue),
+            desiredIssueDate: entity.desiredIssueDate.toISOString(),
+            status: entity.status,
+            numberNF: entity.numberNF,
+            createdAt: entity.createdAt.toISOString(),
+        };
   }
 }

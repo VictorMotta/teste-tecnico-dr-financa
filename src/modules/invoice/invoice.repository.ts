@@ -1,10 +1,28 @@
 import { prisma } from "@/shared/config";
-import { InvoiceEntity, NewInvoiceEntity } from "./type";
+import { InvoiceEntity, ListAllInvoiceEntity, NewInvoiceEntity } from "./type";
 
 export class InvoiceRepository {
   async create(data: NewInvoiceEntity): Promise<InvoiceEntity> {
     const created = await prisma.invoice.create({ data });
     return created; // Prisma já retorna com id, createdAt, updatedAt
+  }
+
+  async findAll(): Promise<ListAllInvoiceEntity[]> {
+    return prisma.invoice.findMany({
+      select: {
+      id: true,
+      cnpjCustomer: true,
+      municipality: true,
+      serviceValue: true,
+      desiredIssueDate: true,
+      status: true,
+      numberNF: true,
+      createdAt: true,
+      },
+      orderBy: {
+        createdAt: 'desc',
+      }
+    });
   }
 
   async findById(id: number): Promise<InvoiceEntity | null> {
