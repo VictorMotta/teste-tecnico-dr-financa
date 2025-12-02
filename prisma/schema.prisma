@@ -2,8 +2,32 @@ datasource db {
   provider = "postgresql"
 }
 
-
 generator client {
   provider = "prisma-client"
   output   = "./generated"
+}
+
+enum Status {
+  PENDENTE_EMISSAO
+  EMITIDA
+  CANCELADA
+
+  @@map("status_invoice")
+}
+
+model Invoice {
+  id               Int      @id @default(autoincrement())
+  cnpjCustomer     String   @map("cnpj_customer") @db.VarChar(14)
+  municipality     String   @map("municipality")
+  state            String   @map("state") @db.VarChar(2)
+  serviceValue     Decimal  @map("service_value") @db.Decimal(10,2)
+  desiredIssueDate DateTime @map("desired_issue_date")
+  description      String   @map("description")
+  status           Status  @default(PENDENTE_EMISSAO) @map("status")
+  numberNF         String?  @map("number_nf")
+  emissionDate     DateTime? @map("emission_date")
+  createdAt        DateTime @map("created_at") @default(now())
+  updatedAt        DateTime @map("updated_at") @updatedAt
+
+  @@map("invoice") // <-- nome da tabela no Postgres
 }

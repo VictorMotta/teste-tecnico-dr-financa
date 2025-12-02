@@ -6,9 +6,12 @@
   "scripts": {
     "prebuild": "rm -rf dist",
     "build": "tsc -p tsconfig.build.json",
-    "dev": "nodemon",
-    "dev:migration": "npx prisma migrate dev",
-    "dev:generate": "npx prisma generate"
+    "start": "cross-env NODE_ENV=production node dist/server.js",
+    "dev": "cross-env NODE_ENV=development nodemon",
+    "dev:migration": "cross-env NODE_ENV=development npx prisma migrate dev",
+    "dev:generate": "cross-env NODE_ENV=development npx prisma generate",
+    "test": "cross-env NODE_ENV=test jest --runInBand",
+    "test:coverage": "cross-env NODE_ENV=test jest --coverage"
   },
   "keywords": [],
   "author": "",
@@ -21,6 +24,7 @@
     "cors": "^2.8.5",
     "dotenv": "^17.2.3",
     "express": "^5.2.1",
+    "http-status": "^2.1.0",
     "joi": "^18.0.2"
   },
   "devDependencies": {
@@ -29,6 +33,7 @@
     "@types/jest": "^30.0.0",
     "@types/node": "^24.10.1",
     "@types/supertest": "^6.0.3",
+    "cross-env": "^10.1.0",
     "jest": "^30.2.0",
     "nodemon": "^3.1.11",
     "prisma": "^7.0.1",

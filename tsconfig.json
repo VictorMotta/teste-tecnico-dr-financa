@@ -10,7 +10,8 @@
     "rootDirs": ["src", "tests"],
     "baseUrl": "src",
     "paths": {
-      "@/*": ["*"]
+      "@/*": ["*"],
+      "@prisma/*": ["../prisma/generated/*"]
     }
   },
   "include": ["src", "tests", "types"]

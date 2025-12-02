@@ -8,3 +8,6 @@ event.json
 /pdfs
 pdfs/*
 /prisma/generated
+.env.staging
+.env.production
+.env.development

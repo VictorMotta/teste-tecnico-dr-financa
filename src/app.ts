@@ -1,15 +1,18 @@
 import express, { Express } from "express";
 import cors from "cors";
-import { loadEnv, connectDb, disconnectDB } from "@/config";
+import { loadEnv, connectDb, disconnectDB } from "@/shared/config";
+import { errorHandler } from "@/shared/middlewares";
+import { invoiceRouter } from "./modules/invoice/invoice.routes";
 
 loadEnv();
 
 const app = express();
 
-app.set("trust proxy", true);
-
 app.use(cors())
+	.use(express.json())
 	.get("/health", (_req, res) => res.send("OK!"))
+	.use("/invoices", invoiceRouter)
+	.use(errorHandler);
 
 export function init(): Promise<Express> {
 	connectDb();
