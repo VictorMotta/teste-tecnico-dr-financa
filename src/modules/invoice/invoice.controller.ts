@@ -1,12 +1,13 @@
 import { NextFunction, Request, Response } from "express";
 import httpStatus from "http-status";
-import { CreateInvoiceService, GetAllInvoicesService } from "./service";
+import { CreateInvoiceService, GetAllInvoicesService, GetOneInvoiceService } from "./service";
 import { CreateInvoiceDto } from "./dto";
 
 export class InvoiceController {
   constructor(
     private readonly createInvoiceService: CreateInvoiceService,
     private readonly getAllInvoicesService: GetAllInvoicesService,
+    private readonly getOneInvoiceService: GetOneInvoiceService,
   ) {}  
 
   async create(req: Request, res: Response, next: NextFunction) {
@@ -29,4 +30,14 @@ export class InvoiceController {
       next(error);
     }
   }
+
+  async findOne(req: Request, res: Response, next: NextFunction) {
+    try {
+      const { id } = req.params as { id: string };
+      const invoice = await this.getOneInvoiceService.execute(Number(id));
+      return res.status(httpStatus.OK).json(invoice);
+    } catch (error) {
+      next(error);
+    }
+  } 
 }

@@ -11,7 +11,7 @@ const app = express();
 app.use(cors())
 	.use(express.json())
 	.get("/health", (_req, res) => res.send("OK!"))
-	.use("/invoices", invoiceRouter)
+	.use("/invoice", invoiceRouter)
 	.use(errorHandler);
 
 export function init(): Promise<Express> {

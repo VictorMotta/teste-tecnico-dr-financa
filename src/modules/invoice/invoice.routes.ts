@@ -1,6 +1,6 @@
 import { Router } from "express";
-import { createInvoiceSchema } from "./dto/create-invoice.schema";
-import { validateBody } from "@/shared/middlewares/validate.middleware";
+import { createInvoiceSchema, getOneInvoiceSchema } from "./dto";
+import { validateBody, validateParams } from "@/shared/middlewares/validate.middleware";
 import { buildCreateInvoiceModule } from "./invoice.factory";
 
 const router = Router();
@@ -11,6 +11,11 @@ router
   .get(
     "/",
     controller.findAll.bind(controller),
+  )
+  .get(
+    "/:id",
+    validateParams(getOneInvoiceSchema),
+    controller.findOne.bind(controller),
   )
   .post(
     "/",
