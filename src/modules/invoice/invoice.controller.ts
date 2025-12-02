@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from "express";
 import httpStatus from "http-status";
-import { CreateInvoiceService, GetAllInvoicesService, GetOneInvoiceService } from "./service";
+import { CreateInvoiceService, EmitInvoiceService, GetAllInvoicesService, GetOneInvoiceService } from "./service";
 import { CreateInvoiceDto } from "./dto";
 
 export class InvoiceController {
@@ -8,6 +8,7 @@ export class InvoiceController {
     private readonly createInvoiceService: CreateInvoiceService,
     private readonly getAllInvoicesService: GetAllInvoicesService,
     private readonly getOneInvoiceService: GetOneInvoiceService,
+    private readonly emitInvoiceService: EmitInvoiceService,
   ) {}  
 
   async create(req: Request, res: Response, next: NextFunction) {
@@ -40,4 +41,14 @@ export class InvoiceController {
       next(error);
     }
   } 
+
+  async emit(req: Request, res: Response, next: NextFunction) {
+    try {
+      const { id } = req.params as { id: string };
+      const emittedInvoice = await this.emitInvoiceService.execute(Number(id));
+      return res.status(httpStatus.OK).json(emittedInvoice);
+    } catch (error) {
+      next(error);
+    }
+  }
 }

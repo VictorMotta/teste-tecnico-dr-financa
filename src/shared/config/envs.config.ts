@@ -5,10 +5,10 @@ export function loadEnv() {
 
 	const path =
 		node_env === "development"
-			? ".env.development"
+			? [".env.development"]
 			: node_env === "test"
-			? ".env.test"
-			: ".env";
+			? [".env.test"]
+			: [".env"];
 
 	dotenv.config({ path });
 }

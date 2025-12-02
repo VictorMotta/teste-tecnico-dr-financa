@@ -6,6 +6,6 @@ export class GetAllInvoicesService {
 
   async execute(){
     const invoices = await this.repository.findAll();
-    return invoices.map(InvoiceMapper.ListToResponseDTO);
+    return invoices.map(InvoiceMapper.listToResponseDTO);
   }
 }

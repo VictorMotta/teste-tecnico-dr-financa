@@ -6,12 +6,12 @@
   "scripts": {
     "prebuild": "rm -rf dist",
     "build": "tsc -p tsconfig.build.json",
-    "start": "cross-env NODE_ENV=production node dist/server.js",
-    "dev": "cross-env NODE_ENV=development nodemon",
-    "dev:migration": "cross-env NODE_ENV=development npx prisma migrate dev",
-    "dev:generate": "cross-env NODE_ENV=development npx prisma generate",
-    "test": "cross-env NODE_ENV=test jest --runInBand",
-    "test:coverage": "cross-env NODE_ENV=test jest --coverage"
+    "start": "NODE_ENV=production node dist/server.js",
+    "dev": "NODE_ENV=development nodemon",
+    "dev:migration": "NODE_ENV=development npx prisma migrate dev",
+    "dev:generate": "NODE_ENV=development npx prisma generate",
+    "test": "NODE_ENV=test jest --runInBand",
+    "test:coverage": "NODE_ENV=test jest --coverage"
   },
   "keywords": [],
   "author": "",
@@ -33,7 +33,6 @@
     "@types/jest": "^30.0.0",
     "@types/node": "^24.10.1",
     "@types/supertest": "^6.0.3",
-    "cross-env": "^10.1.0",
     "jest": "^30.2.0",
     "nodemon": "^3.1.11",
     "prisma": "^7.0.1",

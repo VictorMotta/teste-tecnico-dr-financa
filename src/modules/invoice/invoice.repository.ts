@@ -1,5 +1,5 @@
 import { prisma } from "@/shared/config";
-import { InvoiceEntity, ListAllInvoiceEntity, NewInvoiceEntity } from "./type";
+import { InvoiceEntity, ListAllInvoiceEntity, NewInvoiceEntity, UpdateEmittedInvoiceEntity } from "./type";
 
 export class InvoiceRepository {
   async create(data: NewInvoiceEntity): Promise<InvoiceEntity> {
@@ -27,5 +27,16 @@ export class InvoiceRepository {
 
   async findById(id: number): Promise<InvoiceEntity | null> {
     return prisma.invoice.findUnique({ where: { id } });
+  }
+
+  async updateEmittedInvoice(data: UpdateEmittedInvoiceEntity): Promise<InvoiceEntity> {
+    return prisma.invoice.update({
+      where: { id: data.id },
+      data: {
+        numberNF: data.numberNF,
+        emissionDate: data.emissionDate,
+        status: data.status,
+      },
+    });
   }
 }

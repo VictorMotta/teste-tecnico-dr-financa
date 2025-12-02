@@ -1,5 +1,5 @@
-import { InvoiceEntity, ListAllInvoiceEntity } from "../type";
-import { CreateInvoiceDto, InvoiceResponseDTO, ListAllInvoiceResponseDto } from "../dto";
+import { InvoiceEntity, ListAllInvoiceEntity, UpdateEmittedInvoiceEntity } from "../type";
+import { CreateInvoiceDto, ExternalInvoiceResponseDto, InvoiceResponseDTO, ListAllInvoiceResponseDto } from "../dto";
 import { Status } from "@prisma/client";
 import { Decimal } from "@prisma/client/runtime/client";
 
@@ -35,7 +35,7 @@ export class InvoiceMapper {
     };
   }
 
-  static ListToResponseDTO(entity: ListAllInvoiceEntity): ListAllInvoiceResponseDto {
+  static listToResponseDTO(entity: ListAllInvoiceEntity): ListAllInvoiceResponseDto {
         return {
             id: entity.id,
             cnpjCustomer: entity.cnpjCustomer,
@@ -46,5 +46,17 @@ export class InvoiceMapper {
             numberNF: entity.numberNF,
             createdAt: entity.createdAt.toISOString(),
         };
+  }
+
+  static updateEmmitedToEntity(
+    invoice: InvoiceEntity, 
+    externalResponse: ExternalInvoiceResponseDto
+  ): UpdateEmittedInvoiceEntity {
+    return {
+      id: invoice.id,
+      numberNF: externalResponse.numeroNF,
+      emissionDate: new Date(externalResponse.dataEmissao),
+      status: Status.EMITIDA,
+    };
   }
 }

@@ -25,3 +25,12 @@ export type ListAllInvoiceEntity = Omit<
   InvoiceEntity,
   "state" | "description" | "emissionDate" | "updatedAt"
 >;
+
+type OptionalUpdateFields = Partial<
+  Pick<
+    InvoiceEntity,
+    "numberNF" | "emissionDate" | "status"
+  >
+>;
+
+export type UpdateEmittedInvoiceEntity = OptionalUpdateFields & Pick<InvoiceEntity, "id">;
