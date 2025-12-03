@@ -1,4 +1,4 @@
-import { prisma } from "@/shared/config";
+import { prisma } from "@/shared/configs";
 import { InvoiceEntity, ListAllInvoiceEntity, NewInvoiceEntity, UpdateEmittedInvoiceEntity } from "./type";
 
 export class InvoiceRepository {

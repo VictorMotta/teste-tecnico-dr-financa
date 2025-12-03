@@ -1,6 +1,6 @@
 import express, { Express, Router } from "express";
 import cors from "cors";
-import { loadEnv, connectDb, disconnectDB } from "@/shared/config";
+import { loadEnv, connectDb, disconnectDB } from "@/shared/configs";
 import { errorHandler } from "@/shared/middlewares";
 import { InvoiceController } from "./modules/invoice/invoice.controller";
 import { buildCreateInvoiceModule } from "./modules/invoice/invoice.factory";
