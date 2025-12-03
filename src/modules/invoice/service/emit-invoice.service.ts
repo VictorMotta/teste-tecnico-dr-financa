@@ -26,6 +26,6 @@ export class EmitInvoiceService {
     const updatedInvoice = await this.invoiceRepository.updateEmittedInvoice(payload);
     console.log(updatedInvoice);
 
-    return updatedInvoice;
+    return InvoiceMapper.toResponseDTO(updatedInvoice);
   }   
 }

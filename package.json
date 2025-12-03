@@ -11,7 +11,7 @@
     "dev:migration": "NODE_ENV=development npx prisma migrate dev",
     "dev:generate": "NODE_ENV=development npx prisma generate",
     "dev:seed": "NODE_ENV=development npx prisma db seed",
-    "test": "NODE_ENV=test jest --passWithNoTests --runInBand",
+    "test": "NODE_ENV=test jest --silent --passWithNoTests --runInBand",
     "test:coverage": "NODE_ENV=test jest --passWithNoTests --runInBand --coverage --collectCoverageFrom='./src/**'",
     "test:migration:run": "npm run test:load-envs prisma migrate deploy",
     "test:migration:generate": "npm run test:load-envs prisma migrate dev",
