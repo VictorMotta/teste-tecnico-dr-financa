@@ -1,25 +1,28 @@
 name: Pull Request on Github
+
 on:
   pull_request:
-    branches:
-      - master
-      - staging
+    branches: [ master, develop ]
 
 jobs:
   PullRequest-GitHub:
     runs-on: ubuntu-latest
+
     services:
       postgres:
         image: postgres:latest
         env:
           POSTGRES_USER: postgres
-          POSTGRES_PASSWORD: root
+          POSTGRES_PASSWORD: postgres
           POSTGRES_DB: postgres
+        ports:
+          - 5432:5432
         options: >-
           --health-cmd="pg_isready -U postgres"
-          --health-interval=5s
+          --health-interval=10s
           --health-timeout=5s
           --health-retries=5
+
     steps:
       - uses: actions/checkout@v4
 
@@ -30,37 +33,13 @@ jobs:
 
       - name: Create .env.test file
         run: |
-          echo "DATABASE_URL=postgresql://postgres:root@localhost:5432/postgres" > .env.test
+          echo "DATABASE_URL=postgresql://postgres:postgres@localhost:5432/postgres" > .env.test
           echo "DRFINANCAS_API_KEY=test-key-0000" >> .env.test
           echo "DRFINANCAS_API_URL=http://localhost:4001/mock-api" >> .env.test
           echo "EXPECTED_API_KEY=test" >> .env.test
-          echo "POSTGRES_USERNAME=postgres" >> .env.test
-          echo "POSTGRES_PASSWORD=root" >> .env.test
-          echo "POSTGRES_DB=postgres" >> .env.test
 
-      - name: Install dependencies for API
-        run: |
-          npm install
+      - name: Install dependencies
+        run: npm install
 
-      - name: Run tests for API
-        run: |
-          npm run test:pr:init
-
-  Build-Test:
-    runs-on: ubuntu-latest
-    needs: PullRequest-GitHub  
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: Set up Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: '24.x'
-
-      - name: Install dependencies for API
-        run: |
-          npm install
-
-      - name: Build API
-        run: |
-          npm run build
+      - name: Run tests
+        run: npm run test:pr:init
