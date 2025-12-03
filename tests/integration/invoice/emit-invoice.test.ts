@@ -10,7 +10,7 @@ jest.mock("@/modules/invoice/gateway", () => {
 });
 
 import app, { init } from "@/app";
-import { cleanDb } from "../helpers";
+import { cleanDb } from "../../helpers";
 import supertest from "supertest";
 
 const server = supertest(app);

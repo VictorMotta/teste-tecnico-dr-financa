@@ -1,5 +1,5 @@
 import app, { init } from "@/app"
-import { cleanDb } from "../helpers";
+import { cleanDb } from "../../helpers";
 import supertest from "supertest";
 
 

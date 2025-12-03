@@ -3,7 +3,7 @@ import axios, { AxiosInstance } from "axios";
 jest.mock("axios");
 
 import app, { init } from "@/app";
-import { cleanDb } from "../helpers";
+import { cleanDb } from "../../helpers";
 import supertest from "supertest";
 
 const server = supertest(app);
