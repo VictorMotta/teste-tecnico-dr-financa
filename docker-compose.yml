@@ -1,15 +1,33 @@
-version: "3.8"
-
 services:
+    db:
+        image: postgres
+        container_name: postgres
+        restart: always
+        ports:
+        - 5433:5432
+        env_file:
+        - .env
+        volumes:
+        - postgres-volume:/var/lib/postgresql
     api:
         container_name: api
         build: .
         expose:
-            - "4000" # Expondo a porta apenas para a rede interna
+            - 4000:4000
         env_file:
             - .env
+        depends_on:
+            - db
         restart: always
-
+        command: >
+            sh -c "
+            until nc -z db 5432; do
+                echo 'Esperando o Postgres subir...';
+                sleep 2;
+            done;
+            npm run migration:run &&
+            npm start
+            "
     nginx:
         container_name: nginx_app
         build: ./nginx
@@ -18,3 +36,6 @@ services:
         depends_on:
             - api
         restart: always
+
+volumes:
+    postgres-volume:

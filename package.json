@@ -6,7 +6,9 @@
   "scripts": {
     "prebuild": "rm -rf dist",
     "build": "tsc -p tsconfig.build.json",
-    "start": "NODE_ENV=production node dist/server.js",
+    "migration:run": "NODE_ENV=production prisma migrate deploy",
+    "migration:generate": "NODE_ENV=production prisma migrate dev",
+    "start": "NODE_ENV=production node -r module-alias/register dist/src/server.js",
     "dev": "NODE_ENV=development nodemon",
     "dev:migration": "NODE_ENV=development npx prisma migrate dev",
     "dev:generate": "NODE_ENV=development npx prisma generate",
@@ -17,6 +19,7 @@
     "test:migration:generate": "npm run test:load-envs prisma migrate dev",
     "test:watch": "NODE_ENV=test jest --watch --passWithNoTests --runInBand",
     "test:load-envs": "dotenv -e .env.test",
+    "test:pr:init": "npm run prisma:migration:test && npm run test:load-envs jest -- -i",
     "test:seed": "npm run test:load-envs prisma db seed"
   },
   "keywords": [],
@@ -25,7 +28,9 @@
   },
   "author": "",
   "license": "ISC",
-  "type": "commonjs",
+  "_moduleAliases": {
+    "@": "dist/src"
+  },
   "dependencies": {
     "@prisma/adapter-pg": "^7.0.1",
     "@prisma/client": "^7.0.1",
@@ -35,6 +40,7 @@
     "express": "^5.2.1",
     "http-status": "^2.1.0",
     "joi": "^18.0.2",
+    "module-alias": "^2.2.3",
     "source-map": "^0.7.6"
   },
   "devDependencies": {
@@ -43,6 +49,7 @@
     "@types/express": "^5.0.6",
     "@types/jest": "^30.0.0",
     "@types/node": "^24.10.1",
+    "@types/pg": "^8.15.6",
     "@types/supertest": "^6.0.3",
     "jest": "^30.2.0",
     "nodemon": "^3.1.11",
@@ -52,6 +59,8 @@
     "ts-node": "^10.9.2",
     "tsconfig-paths": "^4.2.0",
     "tsx": "^4.21.0",
-    "typescript": "^5.9.3"
+    "ttypescript": "^1.5.15",
+    "typescript": "^5.9.3",
+    "typescript-transform-paths": "^3.5.5"
   }
 }
