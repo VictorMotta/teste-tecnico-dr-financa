@@ -1,6 +1,6 @@
 import { InvoiceEntity, ListAllInvoiceEntity, UpdateEmittedInvoiceEntity } from "../type";
 import { CreateInvoiceDto, ExternalInvoiceResponseDto, InvoiceResponseDTO, ListAllInvoiceResponseDto } from "../dto";
-import { Status } from "@prisma/client";
+import { Status } from "../../../../prisma/generated/client";
 import { Decimal } from "@prisma/client/runtime/client";
 
 export class InvoiceMapper {

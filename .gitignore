@@ -11,3 +11,4 @@ pdfs/*
 .env.staging
 .env.production
 .env.development
+coverage

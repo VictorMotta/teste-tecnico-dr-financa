@@ -6,6 +6,8 @@ import { InvoiceController } from "./modules/invoice/invoice.controller";
 import { buildCreateInvoiceModule } from "./modules/invoice/invoice.factory";
 import { initializeInvoiceRouter } from "./modules/invoice/invoice.routes";
 
+loadEnv();
+
 const app = express();
 
 let invoiceController: InvoiceController;
@@ -13,7 +15,7 @@ let invoiceRouter: Router;
 
 export function init(): Promise<Express> {
 	loadEnv();
-	invoiceController = buildCreateInvoiceModule();
+	invoiceController = buildCreateInvoiceModule() as InvoiceController;
 	invoiceRouter = initializeInvoiceRouter(invoiceController);
 
 	app.use(cors())

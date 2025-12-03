@@ -1,4 +1,4 @@
-import { Status } from "@prisma/client";
+import { Status } from "../../../../prisma/generated/client";
 import { Decimal } from "@prisma/client/runtime/client";
 
 export interface InvoiceEntity {
