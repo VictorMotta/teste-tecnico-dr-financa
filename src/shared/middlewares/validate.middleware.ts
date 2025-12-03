@@ -29,7 +29,10 @@ function validate(schema: ObjectSchema, type: "body" | "params" | "query") {
 
     if (!error) return next();
 
-    const messages = error.details.map((d) => d.message);
+    const messages = error.details.map((d) =>
+      d.message.replace(/"/g, "") 
+    );
+    
     next(new BadRequestError(messages.join("; ")));
   };
 }

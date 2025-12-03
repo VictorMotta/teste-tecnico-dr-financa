@@ -1,0 +1,422 @@
+openapi: 3.0.0
+info:
+  title: Documentação da API de Faturamento (Invoice)
+  description: API para gerenciar a criação e emissão de solicitações de Notas Fiscais (Invoices).
+  version: 1.0.0
+servers:
+  - url: http://localhost:4000
+    description: Link local rodando com nodemon
+  - url: http://localhost
+    description: Link local rodando no docker
+
+security:
+  - ApiKeyAuth: []
+
+paths:
+  /invoice:
+    post:
+      summary: Criar uma nova solicitação de Nota Fiscal
+      description: Cria um novo registro de solicitação de nota fiscal com status inicial PENDENTE_EMISSAO.
+      tags:
+        - Invoice
+      security:
+        - ApiKeyAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateInvoiceRequest'
+      responses:
+        '201':
+          description: Solicitação de Nota Fiscal criada com sucesso.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InvoiceResponse'
+        '400':
+          description: Erro de Validação (Bad Request).
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequestError'
+        '401':
+          description: Não Autorizado (Unauthorized).
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UnauthorizedError'
+        '500':
+          description: Erro Interno do Servidor.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InternalServerError'
+    get:
+      summary: Listar todas as solicitações de Notas Fiscais
+      description: Retorna uma lista de todas as solicitações de notas fiscais criadas.
+      tags:
+        - Invoice
+      security:
+        - ApiKeyAuth: []
+      responses:
+        '200':
+          description: Lista de solicitações de Notas Fiscais retornada com sucesso.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: integer
+                    example: 200
+                  body:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/ListInvoiceItem'
+        '401':
+          description: Não Autorizado (Unauthorized).
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UnauthorizedError'
+        '500':
+          description: Erro Interno do Servidor.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InternalServerError'
+
+  /invoice/{invoice_id}:
+    get:
+      summary: Listar uma solicitação de Nota Fiscal específica
+      description: Retorna os detalhes de uma nota fiscal específica pelo seu ID.
+      tags:
+        - Invoice
+      security:
+        - ApiKeyAuth: []
+      parameters:
+        - name: invoice_id
+          in: path
+          required: true
+          description: ID da solicitação de Nota Fiscal.
+          schema:
+            type: integer
+            format: int64
+            minimum: 1
+      responses:
+        '200':
+          description: Detalhes da Nota Fiscal retornados com sucesso.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InvoiceResponse'
+        '400':
+          description: Erro de Validação (Bad Request) para o ID.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequestError'
+        '401':
+          description: Não Autorizado (Unauthorized).
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UnauthorizedError'
+        '500':
+          description: Erro Interno do Servidor.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InternalServerError'
+
+  /invoice/{invoice_id}/emit:
+    post:
+      summary: Emitir uma Nota Fiscal a partir de uma solicitação
+      description: Tenta emitir a nota fiscal no serviço externo, alterando seu status.
+      tags:
+        - Invoice
+      security:
+        - ApiKeyAuth: []
+      parameters:
+        - name: invoice_id
+          in: path
+          required: true
+          description: ID da solicitação de Nota Fiscal a ser emitida.
+          schema:
+            type: integer
+            format: int64
+            minimum: 1
+      responses:
+        '200':
+          description: Nota Fiscal emitida com sucesso.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InvoiceResponse'
+        '401':
+          description: Não Autorizado (Unauthorized).
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UnauthorizedError'
+        '409':
+          description: 'Conflito (Conflict). A NF não pode ser emitida no status atual (ex: já foi emitida).'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConflictError'
+        '500':
+          description: Erro Interno do Servidor.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InternalServerError'
+        '503':
+          description: Erro de Serviço Externo (External Service Error).
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: '#/components/schemas/ExternalServiceErrorData'
+                  - $ref: '#/components/schemas/ExternalServiceErrorAuth'
+                  - $ref: '#/components/schemas/ExternalServiceErrorUnavailable'
+                  - $ref: '#/components/schemas/ExternalServiceErrorUnexpected'
+                  - $ref: '#/components/schemas/ExternalServiceErrorNetwork'
+
+components:
+  securitySchemes:
+    ApiKeyAuth:
+      type: apiKey
+      in: header
+      name: Authorization
+      description: 'Chave de API (ex: teste-api)'
+
+  schemas:
+    InvoiceStatus:
+      type: string
+      enum:
+        - PENDENTE_EMISSAO
+        - EMITIDA
+      description: Status atual da solicitação de Nota Fiscal.
+
+    CreateInvoiceRequest:
+      type: object
+      required:
+        - cnpjCustomer
+        - municipality
+        - serviceValue
+        - desiredIssueDate
+        - state
+        - description
+      properties:
+        cnpjCustomer:
+          type: string
+          example: "12345678000199"
+          description: CNPJ do cliente.
+        municipality:
+          type: string
+          example: "São Paulo"
+          description: Município do serviço.
+        state:
+          type: string
+          example: "SP"
+          description: Estado do serviço.
+        serviceValue:
+          type: number
+          format: float
+          example: 1500.75
+          description: Valor do serviço.
+        desiredIssueDate:
+          type: string
+          format: date-time
+          example: "2025-01-15T00:00:00.000Z"
+          description: Data desejada para a emissão.
+        description:
+          type: string
+          example: "Serviço de consultoria técnica especializada"
+          description: Descrição do serviço.
+
+    InvoiceResponse:
+      type: object
+      properties:
+        status:
+          type: integer
+          example: 201
+        body:
+          $ref: '#/components/schemas/InvoiceDetail'
+
+    InvoiceDetail:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+          example: 1
+        cnpjCustomer:
+          type: string
+          example: "12345678000199"
+        municipality:
+          type: string
+          example: "São Paulo"
+        state:
+          type: string
+          example: "SP"
+        serviceValue:
+          type: number
+          format: float
+          example: 1500.75
+        desiredIssueDate:
+          type: string
+          format: date-time
+          example: "2025-01-15T00:00:00.000Z"
+        description:
+          type: string
+          example: "Serviço de consultoria técnica especializada"
+        status:
+          $ref: '#/components/schemas/InvoiceStatus'
+        numberNF:
+          type: string
+          nullable: true
+          example: "71443"
+          description: Número da Nota Fiscal (preenchido após emissão).
+        emissionDate:
+          type: string
+          format: date-time
+          nullable: true
+          example: "2025-12-03T05:59:31.000Z"
+          description: Data de emissão (preenchida após emissão).
+        createdAt:
+          type: string
+          format: date-time
+          example: "2025-12-03T05:59:03.062Z"
+        updatedAt:
+          type: string
+          format: date-time
+          example: "2025-12-03T05:59:03.062Z"
+
+    ListInvoiceItem:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+          example: 2
+        cnpjCustomer:
+          type: string
+          example: "12345678000199"
+        municipality:
+          type: string
+          example: "São Paulo"
+        serviceValue:
+          type: number
+          format: float
+          example: 1500.75
+        desiredIssueDate:
+          type: string
+          format: date-time
+          example: "2025-01-15T00:00:00.000Z"
+        status:
+          $ref: '#/components/schemas/InvoiceStatus'
+        numberNF:
+          type: string
+          nullable: true
+          example: "71443"
+        createdAt:
+          type: string
+          format: date-time
+          example: "2025-12-03T07:05:20.915Z"
+
+    # --- Schemas de Erro Comuns ---
+
+    UnauthorizedError:
+      type: object
+      properties:
+        error:
+          type: string
+          example: "UnauthorizedError"
+        message:
+          type: string
+          example: "Invalid token or missing authorization header"
+
+    BadRequestError:
+      type: object
+      properties:
+        error:
+          type: string
+          example: "BadRequestError"
+        message:
+          type: string
+          example: "cnpjCustomer is required; municipality is not allowed to be empty"
+
+    InternalServerError:
+      type: object
+      properties:
+        error:
+          type: string
+          example: "InternalServerError"
+        message:
+          type: string
+          example: "Unexpected internal server error"
+
+    ConflictError:
+      type: object
+      properties:
+        error:
+          type: string
+          example: "ConflictError"
+        message:
+          type: string
+          example: "Invoice cannot be emitted in its current status."
+
+    # --- Schemas de Erro 503 (ExternalServiceError) ---
+
+    ExternalServiceErrorData:
+      type: object
+      properties:
+        error:
+          type: string
+          example: "ExternalServiceError"
+        message:
+          type: string
+          example: "Internal data error when formatting the Invoice for emission."
+
+    ExternalServiceErrorAuth:
+      type: object
+      properties:
+        error:
+          type: string
+          example: "ExternalServiceError"
+        message:
+          type: string
+          example: "Service key authentication failed."
+
+    ExternalServiceErrorUnavailable:
+      type: object
+      properties:
+        error:
+          type: string
+          example: "ExternalServiceError"
+        message:
+          type: string
+          example: "The Invoice emission service is unavailable. Please try again later."
+
+    ExternalServiceErrorUnexpected:
+      type: object
+      properties:
+        error:
+          type: string
+          example: "ExternalServiceError"
+        message:
+          type: string
+          example: "The external API returned an unexpected error: 418."
+
+    ExternalServiceErrorNetwork:
+      type: object
+      properties:
+        error:
+          type: string
+          example: "ExternalServiceError"
+        message:
+          type: string
+          example: "Network failure or timeout when connecting to the external API."
