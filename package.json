@@ -16,9 +16,9 @@
     "test": "NODE_ENV=test jest --silent --passWithNoTests --runInBand",
     "test:coverage": "NODE_ENV=test jest --passWithNoTests --runInBand --coverage --collectCoverageFrom='./src/**'",
     "test:migration:run": "npm run test:load-envs prisma migrate deploy",
-    "test:migration:generate": "npm run test:load-envs prisma migrate dev",
+    "prisma:migration:test": "NODE_ENV=test prisma migrate dev && NODE_ENV=test prisma db seed",
     "test:watch": "NODE_ENV=test jest --watch --passWithNoTests --runInBand",
-    "test:load-envs": "dotenv -e .env.test",
+    "test:load-envs": "NODE_ENV=test",
     "test:pr:init": "npm run prisma:migration:test && npm run test:load-envs jest -- -i",
     "test:seed": "npm run test:load-envs prisma db seed"
   },
