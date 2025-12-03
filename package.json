@@ -10,10 +10,19 @@
     "dev": "NODE_ENV=development nodemon",
     "dev:migration": "NODE_ENV=development npx prisma migrate dev",
     "dev:generate": "NODE_ENV=development npx prisma generate",
-    "test": "NODE_ENV=test jest --runInBand",
-    "test:coverage": "NODE_ENV=test jest --coverage"
+    "dev:seed": "NODE_ENV=development npx prisma db seed",
+    "test": "NODE_ENV=test jest --passWithNoTests --runInBand",
+    "test:coverage": "NODE_ENV=test jest --passWithNoTests --runInBand --coverage --collectCoverageFrom='./src/**'",
+    "test:migration:run": "npm run test:load-envs prisma migrate deploy",
+    "test:migration:generate": "npm run test:load-envs prisma migrate dev",
+    "test:watch": "NODE_ENV=test jest --watch --passWithNoTests --runInBand",
+    "test:load-envs": "dotenv -e .env.test",
+    "test:seed": "npm run test:load-envs prisma db seed"
   },
   "keywords": [],
+  "prisma": {
+    "seed": "node ./prisma/seed.ts"
+  },
   "author": "",
   "license": "ISC",
   "type": "commonjs",
@@ -28,6 +37,7 @@
     "joi": "^18.0.2"
   },
   "devDependencies": {
+    "@faker-js/faker": "^10.1.0",
     "@types/cors": "^2.8.19",
     "@types/express": "^5.0.6",
     "@types/jest": "^30.0.0",
@@ -39,6 +49,7 @@
     "supertest": "^7.1.4",
     "ts-node": "^10.9.2",
     "tsconfig-paths": "^4.2.0",
+    "tsx": "^4.21.0",
     "typescript": "^5.9.3"
   }
 }

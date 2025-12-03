@@ -4,7 +4,7 @@ import { InvoiceEntity, ListAllInvoiceEntity, NewInvoiceEntity, UpdateEmittedInv
 export class InvoiceRepository {
   async create(data: NewInvoiceEntity): Promise<InvoiceEntity> {
     const created = await prisma.invoice.create({ data });
-    return created; // Prisma já retorna com id, createdAt, updatedAt
+    return created;
   }
 
   async findAll(): Promise<ListAllInvoiceEntity[]> {
